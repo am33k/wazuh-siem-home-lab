@@ -83,4 +83,17 @@ Rather than bridging VMs onto the home LAN, all lab VMs sit on an isolated **Vir
 
 ## Screenshots
 
-*(Add screenshots here as you go: NAT Network config, static IP config screen, SSH login, Wazuh dashboard login screen, dashboard overview.)*
+![NAT Network and port forwarding configuration](screenshots/nat-network-port-forwarding.png)
+*Isolated NAT Network (`WazuhLabNet`, 10.0.2.0/24) with explicit port-forward rules — Host 2222 → Guest 22 (SSH) and Host 8443 → Guest 443 (Dashboard). No route exists from the host into this subnet except through these two deliberate rules.*
+
+![SSH login from host into the Manager VM](screenshots/ssh-login-success.png)
+*Confirming the isolated network is reachable only through the configured port forward: `ssh -p 2222 am33k@127.0.0.1` from the host, routed through VirtualBox's NAT engine into the VM at 10.0.2.3:22.*
+
+![Wazuh install summary output](screenshots/wazuh-install-summary.png)
+*Tail of the official Wazuh all-in-one installer script output, confirming the indexer, manager, and dashboard services all started successfully. (Credentials line cropped out before saving.)*
+
+![Wazuh dashboard login page](screenshots/dashboard-login-page.png)
+*Dashboard reachable at `https://127.0.0.1:8443` via the port-forward rule. Browser flags the connection as "Not secure" because Wazuh's TLS certificate is self-signed — expected for an internal lab tool, not a sign of broken encryption.*
+
+![Wazuh dashboard overview after login](screenshots/dashboard-overview.png)
+*Initial dashboard state with zero agents connected. Notably, the Manager itself already generated 10 medium- and 11 low-severity alerts from its own baseline vulnerability/configuration checks — before any agent was ever added.*
